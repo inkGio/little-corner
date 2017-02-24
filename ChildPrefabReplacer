@@ -71,10 +71,20 @@ public class PrefabReplacement : MonoBehaviour
 
 			for(int j = 0; j  < uniquePrefabNum; j++)
 			{
-				if(nameOfInstance == uniqueInstanceList[j].name)
+				
+				//If the object is a clone object with a number at the end such as object(clone)(02) , 
+				//delete the (02) from the name, so the instance can be replaced
+				char[] charName = nameOfInstance.ToCharArray();
+				if(charName[charName.Length - 3] == '(')
 				{
-					duplicatePrefabFound = true;
+					nameOfInstance = nameOfInstance.Substring(0, nameOfInstance.Length - 4);	
+					print("removed a parentheses from " + nameOfInstance);
+					childrenPrefabs[i].name = nameOfInstance;
 				}
+				
+				if(nameOfInstance == uniqueInstanceList[j].name)
+					duplicatePrefabFound = true;
+				
 			}
 
 			//If no duplicates are found, increase the total number of unique prefabs, and set bool to false for next loop

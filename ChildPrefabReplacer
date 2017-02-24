@@ -50,6 +50,9 @@ public class PrefabReplacement : MonoBehaviour
 	{
 		replaceInstances = false;
 
+    if(parentPrefab == null)
+			return;
+      
 		//Set length of array based on number of children in gameobject
 		childrenPrefabs = new GameObject[parentPrefab.transform.childCount];
 
@@ -116,7 +119,7 @@ public class PrefabReplacement : MonoBehaviour
     //prefabs mentioned in NamesOfOldPrefabs
 
 		//Once the updated prefabs are assigned, set bool to true in inspector to manually activate the search and replace
-		if(replaceInstances == true)
+		if(replaceInstances == true && parentPrefab != null)
 		{
 			//For each selected prefab object in the inspector (that is not null), find and replace every selected item from 
       //the childrenPrefabs[] array

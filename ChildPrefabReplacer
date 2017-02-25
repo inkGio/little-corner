@@ -5,17 +5,17 @@
 /// script by sketchyGio/inkGio (curse the guy who stole my screenname on github)
 
 
-//	   Instructions:
+//	Instructions:
 //	1. Add script to a gameobject in the scene.
 //	2. Assign the target parent prefab through the inspector.
 //	3. Play the scene.
 //	4. All child gameobjects are populated added under the ChildrenPrefabs section in the inspector.
 //	5. All UNIQUE names of prefabs are added once under NameOfOldPrefabs.
 //	6. While the scene is playing, select the updated replacement prefabs in the ReplacementPrefabs inspector field. 
-//     These should mirror the NameOfOldPrefabs. If you don't want to replace a certain prefab, you
-//     can leave the appropriate field blank.
-//	7. Check the bool box "Replace Instances" in the inspector and the script should instantly delete old children 
-//     prefabs and replace them with the new ones.
+//     These should mirror the NameOfOldPrefabs
+//	   If you don't want to replace a certain prefab, you can leave the appropriate field blank.
+//	7. Check the bool box "Replace Instances" in the inspector and the script should instantly delete old children prefabs 
+//      and replace them with the new ones.
 
 
 using UnityEngine;
@@ -36,9 +36,8 @@ public class PrefabReplacement : MonoBehaviour
 	int uniquePrefabNum = 0;
 
 	//These two arrays will be resized according to how many unique instances are added to uniqueInstanceList
-	//At runtime, you will need to allocate replacement prefabs for replacementPrefabs[], to match the names of 
-  //the instances you want replaced from nameOfOldPrefabs[]
-  
+	//At runtime, you will need to allocate replacement prefabs for replacementPrefabs[], to match the names of the 
+  //instances you want replaced from nameOfOldPrefabs[]
 	public string[] nameOfOldPrefabs;
 	public GameObject[] replacementPrefabs;
 
@@ -50,9 +49,9 @@ public class PrefabReplacement : MonoBehaviour
 	{
 		replaceInstances = false;
 
-    if(parentPrefab == null)
+		if(parentPrefab == null)
 			return;
-      
+		
 		//Set length of array based on number of children in gameobject
 		childrenPrefabs = new GameObject[parentPrefab.transform.childCount];
 
@@ -75,16 +74,46 @@ public class PrefabReplacement : MonoBehaviour
 			for(int j = 0; j  < uniquePrefabNum; j++)
 			{
 				
-				//If the object is a clone object with a number at the end such as object(clone)(02) , 
-				//delete the (02) from the name, so the instance can be replaced
+				//Find the end of the last enclosing parentheses from names likes object(Clone)(123)
 				char[] charName = nameOfInstance.ToCharArray();
-				if(charName[charName.Length - 3] == '(')
+				if(charName[charName.Length - 1] == ')')
 				{
-					nameOfInstance = nameOfInstance.Substring(0, nameOfInstance.Length - 4);	
-					print("removed a parentheses from " + nameOfInstance);
-					childrenPrefabs[i].name = nameOfInstance;
+					string parenthesesContents = null;
+					int parenthesesStart = 0;
+					int parenthesesEnd = charName.Length;
+
+					//Find the beginning of the last enclosing parentheses
+					for(int k = charName.Length - 1; k >= 0; k--)
+					{
+							if(charName[k] == '(')
+						{
+							parenthesesStart =  k;
+							break;
+						}
+					}
+						
+					//Convert parentheses contents into a number to see if they're using the deafult unity cloning format
+					//If the parentheses do enclose numbers, delete those numbers, so all clones of that type end up having
+          //the same name
+					if(parenthesesStart != 0)
+					{
+						for(int l = parenthesesStart + 1; l < parenthesesEnd - 1; l++)
+						{
+							parenthesesContents = parenthesesContents + charName[l].ToString();
+						}
+
+						int parenthesesNumber;
+						if(int.TryParse(parenthesesContents,out parenthesesNumber))
+						{
+							print("Removed (" + parenthesesContents + ") from name " + nameOfInstance);
+							nameOfInstance = nameOfInstance.Substring(0, nameOfInstance.Length - (nameOfInstance.Length - parenthesesStart + 1));
+							print(nameOfInstance);
+						}
+						
+					}
 				}
-				
+
+				//Do not add duplicate item names to unique instance array
 				if(nameOfInstance == uniqueInstanceList[j].name)
 					duplicatePrefabFound = true;
 				
@@ -113,17 +142,17 @@ public class PrefabReplacement : MonoBehaviour
 
 	void Update () 
 	{
+		
 		//Once the script runs, X inspector should create a new field for each unique prefab, under NamesOfOldPrefabs
 		//These fields are meant as a reference for the user, in order to use the PrefabReplacement fields
-		//User should assign updated prefabs through the PrefabReplacement fields at runtime, matching the outdated 
-    //prefabs mentioned in NamesOfOldPrefabs
+		//User should assign updated prefabs through the PrefabReplacement fields at runtime, matching the outdated prefabs
+    //mentioned in NamesOfOldPrefabs
 
 		//Once the updated prefabs are assigned, set bool to true in inspector to manually activate the search and replace
 		if(replaceInstances == true && parentPrefab != null)
 		{
 			//For each selected prefab object in the inspector (that is not null), find and replace every selected item from 
       //the childrenPrefabs[] array
-      
 			for(int i=0; i < replacementPrefabs.Length; i++)
 			{
 				if(replacementPrefabs[i] != null)

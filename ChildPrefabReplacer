@@ -107,7 +107,7 @@ public class PrefabReplacement : MonoBehaviour
 						{
 							print("Removed (" + parenthesesContents + ") from name " + nameOfInstance);
 							nameOfInstance = nameOfInstance.Substring(0, nameOfInstance.Length - (nameOfInstance.Length - parenthesesStart + 1));
-							print(nameOfInstance);
+							childrenPrefabs[i].name = nameOfInstance;
 						}
 						
 					}

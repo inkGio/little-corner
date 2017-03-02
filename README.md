@@ -16,12 +16,18 @@ Instance(Clone)(04)
 
 Instance(Clone)(112)
 
+
 then the script should delete the last set of parentheses containing numbers from the instance's name, so they all appear as:
 
+
 Instance(Clone)
+
 Instance(Clone)
+
 Instance(Clone)
+
 Instance(Clone)
+
 
 Then it will list an array of all the unique instances inside the inspector, alon with providing you an empty array of matching size. You can use this array to select the prefab you wish to use to replace the instance of the same index. Once the instances are replaced, you can update the parent prefab.
 

@@ -5,10 +5,15 @@ https://feedback.unity3d.com/suggestions/editor-nested-prefabs
 To circumvent the issue until they are supported, this script can be used to identify all unique instances inside a parent object by name. If the instances are named as such:
 
 Instance(Clone)(01)
+
 Instance(Clone)(02)
+
 Instance(Clone)(03)
+
 Instance(Clone)(04)
+
 ...
+
 Instance(Clone)(112)
 
 then the script should delete the last set of parentheses containing numbers from the instance's name, so they all appear as:

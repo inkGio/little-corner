@@ -12,10 +12,10 @@
 //	4. All child gameobjects are populated added under the ChildrenPrefabs section in the inspector.
 //	5. All UNIQUE names of prefabs are added once under NameOfOldPrefabs.
 //	6. While the scene is playing, select the updated replacement prefabs in the ReplacementPrefabs inspector field. 
-//     These should mirror the NameOfOldPrefabs
+//	   These should mirror the NameOfOldPrefabs
 //	   If you don't want to replace a certain prefab, you can leave the appropriate field blank.
-//	7. Check the bool box "Replace Instances" in the inspector and the script should instantly delete old children prefabs 
-//      and replace them with the new ones.
+//	7. Check the bool box "Replace Instances" in the inspector and the script should instantly delete old children 
+//	   prefabs and replace them with the new ones.
 
 
 using UnityEngine;
@@ -36,8 +36,8 @@ public class PrefabReplacement : MonoBehaviour
 	int uniquePrefabNum = 0;
 
 	//These two arrays will be resized according to how many unique instances are added to uniqueInstanceList
-	//At runtime, you will need to allocate replacement prefabs for replacementPrefabs[], to match the names of the 
-  //instances you want replaced from nameOfOldPrefabs[]
+	//At runtime, you will need to allocate replacement prefabs for replacementPrefabs[], to match the names of the
+	//instances you want replaced from nameOfOldPrefabs[]
 	public string[] nameOfOldPrefabs;
 	public GameObject[] replacementPrefabs;
 
@@ -92,9 +92,9 @@ public class PrefabReplacement : MonoBehaviour
 						}
 					}
 						
-					//Convert parentheses contents into a number to see if they're using the deafult unity cloning format
-					//If the parentheses do enclose numbers, delete those numbers, so all clones of that type end up having
-          //the same name
+					//Convert parentheses contents into a number to see if they're using the deafult unity 
+					//cloning format If the parentheses do enclose numbers, delete those numbers, so all 
+					// clones of that type end up having the same name
 					if(parenthesesStart != 0)
 					{
 						for(int l = parenthesesStart + 1; l < parenthesesEnd - 1; l++)
@@ -119,12 +119,13 @@ public class PrefabReplacement : MonoBehaviour
 				
 			}
 
-			//If no duplicates are found, increase the total number of unique prefabs, and set bool to false for next loop
+			//If no duplicates are found, increase the total number of unique prefabs, and set bool to 
+			//false for next loop
 			if(duplicatePrefabFound == false)
 			{
 				uniquePrefabNum++;
 				uniqueInstanceList.Add( new UniqueInstance(nameOfInstance) );
-				print(nameOfInstance + " found as child instance type # " + i);
+				//print(nameOfInstance + " found as child instance type # " + i);
 			}
 			duplicatePrefabFound = false;
 		}
@@ -143,23 +144,26 @@ public class PrefabReplacement : MonoBehaviour
 	void Update () 
 	{
 		
-		//Once the script runs, X inspector should create a new field for each unique prefab, under NamesOfOldPrefabs
+		//Once the script runs, inspector should create a new field for each unique prefab, under NamesOfOldPrefabs
 		//These fields are meant as a reference for the user, in order to use the PrefabReplacement fields
-		//User should assign updated prefabs through the PrefabReplacement fields at runtime, matching the outdated prefabs
-    //mentioned in NamesOfOldPrefabs
+		//User should assign updated prefabs through the PrefabReplacement fields at runtime, matching the outdated prefabs 
+		//mentioned in NamesOfOldPrefabs
 
 		//Once the updated prefabs are assigned, set bool to true in inspector to manually activate the search and replace
 		if(replaceInstances == true && parentPrefab != null)
 		{
 			//For each selected prefab object in the inspector (that is not null), find and replace every selected item from 
-      //the childrenPrefabs[] array
+			//the childrenPrefabs[] array
+			print(replacementPrefabs.Length);
+
 			for(int i=0; i < replacementPrefabs.Length; i++)
 			{
 				if(replacementPrefabs[i] != null)
 				{
 					for(int j=0; j < childrenPrefabs.Length; j++)
 					{
-						if(childrenPrefabs[j].name == nameOfOldPrefabs[i])
+
+						if(childrenPrefabs[j] != null && childrenPrefabs[j].name == nameOfOldPrefabs[i]) 
 						{
 							Vector3 instancePos = childrenPrefabs[j].transform.position;
 							Destroy(childrenPrefabs[j]);
@@ -167,11 +171,10 @@ public class PrefabReplacement : MonoBehaviour
 							Instantiate(replacementPrefabs[i],instancePos, Quaternion.identity, parentPrefab.transform);
 						}
 					}
-					print(nameOfOldPrefabs[i]);
+					print(i);
 				}
 			}
 			replaceInstances = false;
-
 			print("Finished replacing instances with updated prefab clones. Save the current parent prefab instance before exiting the scene preview!");
 		}
 	}
